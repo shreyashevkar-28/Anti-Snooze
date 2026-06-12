@@ -185,16 +185,13 @@ export default function App() {
   }, []);
 
   // ── Audio start / stop ────────────────────────────────────────────────────
-  // These read from REFS so they are always current, even inside the WS closure.
   const startAudio = useCallback(() => {
     if (toneModeRef.current === "file" && fileAudioRef.current) {
-      // ── Custom file path ──
       const audio = fileAudioRef.current;
       audio.currentTime = 0;
       audio.volume = 0.05;
       audio.play()
         .then(() => {
-          // Ramp volume 5% → 100% over 30 s
           clearInterval(rampIdRef.current);
           let v = 0.05;
           rampIdRef.current = setInterval(() => {
@@ -205,19 +202,15 @@ export default function App() {
         })
         .catch(err => {
           console.error("Custom audio play failed:", err);
-          // Fallback to generated beep if file fails
           alarmTone.current.play();
         });
     } else {
-      // ── Generated beep path ──
       alarmTone.current.play();
     }
-  }, []); // no deps — reads refs directly
+  }, []);
 
   const stopAudio = useCallback(() => {
-    // Stop generated beep
     alarmTone.current.stop();
-    // Stop custom file
     clearInterval(rampIdRef.current);
     if (fileAudioRef.current) {
       fileAudioRef.current.pause();
@@ -241,7 +234,7 @@ export default function App() {
       if (d.action === "TRIGGER_ALARM") {
         setRingDiff(d.difficulty || "medium");
         setIsRinging(true);
-        startAudio();           // reads toneModeRef + fileAudioRef — always fresh
+        startAudio();
       }
       if (d.action === "DISMISS_ALARM") {
         stopAudio();
@@ -259,22 +252,19 @@ export default function App() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Revoke old blob URL to free memory
     if (fileUrlRef.current) URL.revokeObjectURL(fileUrlRef.current);
 
     const url = URL.createObjectURL(file);
     fileUrlRef.current = url;
 
-    // Build the Audio element and store in ref immediately
     const audio = new Audio(url);
     audio.loop = true;
     audio.volume = 0.05;
-    fileAudioRef.current = audio;   // ref updated instantly — no async/stale issue
+    fileAudioRef.current = audio;
 
     setCustomTone(file.name);
     setToneMode("file");
-    // toneModeRef is synced via useEffect above
-    toneModeRef.current = "file";   // also set immediately so it's ready at once
+    toneModeRef.current = "file";
   };
 
   // ── Set alarm ─────────────────────────────────────────────────────────────
@@ -302,36 +292,42 @@ export default function App() {
   const wsLabel = { connecting:"LINKING…", ok:"LINKED", lost:"LOST · RETRYING" }[wsStatus];
 
   return (
-    <div
-      onPointerDown={() => setInteracted(true)}
-      style={{
-        minHeight:"100svh", display:"flex", flexDirection:"column",
-        alignItems:"center", justifyContent:"center",
-        background:"#05080d",
-        fontFamily:"'Courier New','Lucida Console',monospace",
-        overflow:"hidden", position:"relative",
-      }}
-    >
+      <div
+        onPointerDown={() => setInteracted(true)}
+        style={{
+          minHeight:"100svh", display:"flex", flexDirection:"column",
+          alignItems:"center", justifyContent:"center",
+          background: "#05080d",
+          
+          /* CHANGED: Inherit the global font and bump the default weight */
+          fontFamily: "inherit",
+          fontWeight: 700, 
+          
+          overflow:"hidden", position:"relative",
+        }}
+      >
       {/* Scanlines */}
       <div style={{
-        position:"fixed", inset:0, zIndex:50, pointerEvents:"none",
-        backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px)",
-      }}/>
+        fontSize: "clamp(2.5rem, 5vw, 4.5rem)", /* Increased max size */
+        fontWeight: 800,                        /* Weight already heavy, can be 900 */
+        color: "#ffffff",                       /* Changed from #f1f5f9 to pure white */
+        // ... rest of styles
+        }}></div>
 
       {/* Grid */}
       <div style={{
         position:"fixed", inset:0, pointerEvents:"none",
-        backgroundImage:`linear-gradient(rgba(251,191,36,0.04) 1px,transparent 1px),
-                         linear-gradient(90deg,rgba(251,191,36,0.04) 1px,transparent 1px)`,
+        backgroundImage:`linear-gradient(rgba(86, 228, 253, 0.04) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(86, 228, 253, 0.04) 1px,transparent 1px)`,
         backgroundSize:"44px 44px",
       }}/>
 
       {/* Corner brackets */}
       {[
-        {top:0,    left:0,    borderTop:"1px solid #fbbf2455",    borderLeft:"1px solid #fbbf2455"},
-        {top:0,    right:0,   borderTop:"1px solid #fbbf2455",    borderRight:"1px solid #fbbf2455"},
-        {bottom:0, left:0,    borderBottom:"1px solid #fbbf2455", borderLeft:"1px solid #fbbf2455"},
-        {bottom:0, right:0,   borderBottom:"1px solid #fbbf2455", borderRight:"1px solid #fbbf2455"},
+        {top:0,    left:0,    borderTop:"0.8px solid #56e4fd",    borderLeft:"0.8px solid #56e4fd"},
+        {top:0,    right:0,   borderTop:"0.8px solid #56e4fd",    borderRight:"0.8px solid #56e4fd"},
+        {bottom:0, left:0,    borderBottom:"0.8px solid #56e4fd", borderLeft:"0.8px solid #56e4fd"},
+        {bottom:0, right:0,   borderBottom:"0.8px solid #56e4fd", borderRight:"0.8px solid #56e4fd"},
       ].map((s,i)=>(
         <div key={i} style={{position:"fixed",width:72,height:72,pointerEvents:"none",...s}}/>
       ))}
@@ -344,8 +340,8 @@ export default function App() {
         borderBottom:"1px solid #1a2035",
         background:"linear-gradient(180deg,rgba(5,8,13,0.97),transparent)",
       }}>
-        <span style={{color:"#64748b",fontSize:11,letterSpacing:"0.35em",fontWeight:600}}>
-          ANTI-SNOOZE SYS v2
+        <span style={{color:"#56e4fd",fontSize:11,letterSpacing:"0.35em",fontWeight:600}}>
+          ANTI-SNOOZE SYS 
         </span>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <span style={{
@@ -356,45 +352,41 @@ export default function App() {
             {wsLabel}
           </span>
         </div>
-        <span style={{color:"#64748b",fontSize:11,letterSpacing:"0.25em",fontWeight:600}}>
+        <span style={{color:"#56e4fd",fontSize:11,letterSpacing:"0.25em",fontWeight:600}}>
           {dayStr}
         </span>
       </div>
 
-      {/* Main layout */}
+      {/* Main layout split row */}
       <div style={{
-        display:"flex", alignItems:"center", gap:72,
-        maxWidth:920, width:"100%", padding:"0 52px",
+        display:"flex", flexDirection:"row", alignItems:"center", gap:90,
+        maxWidth:1000, width:"100%", padding:"0 52px",
         position:"relative", zIndex:10,
       }}>
 
-        {/* Analog clock */}
-        <div style={{flexShrink:0,width:264,height:264,position:"relative"}}>
-          <div style={{
-            position:"absolute",inset:-2,borderRadius:"50%",
-            boxShadow:"0 0 0 1px #fbbf2422, 0 0 50px #fbbf2418",
-          }}/>
-          <AnalogClock date={now}/>
-        </div>
-
-        {/* Vertical divider */}
+        {/* LEFT COLUMN: Analog Clock + Digital Time Stack */}
         <div style={{
-          width:1, alignSelf:"stretch", flexShrink:0,
-          background:"linear-gradient(180deg,transparent,#fbbf2466 30%,#fbbf2466 70%,transparent)",
-        }}/>
-
-        {/* Right panel */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",gap:22}}>
-
-          {/* Digital time */}
-          <div>
+          display: "flex", flexDirection: "column", alignItems: "center",
+          gap: 28, flexShrink: 0, width: 284
+        }}>
+          {/* Analog clock */}
+          <div style={{width:264,height:264,position:"relative"}}>
             <div style={{
-              fontSize:"clamp(3rem,7vw,5.2rem)", fontWeight:800,
+              position:"absolute",inset:-2,borderRadius:"50%",
+              boxShadow:"0 0 0 1px #1a4b5f, 0 0 50px #56e4fd1f",
+            }}/>
+            <AnalogClock date={now}/>
+          </div>
+
+          {/* Digital time element nested right here under the clock */}
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              fontSize:"clamp(2.5rem, 5vw, 3.8rem)", fontWeight:800,
               letterSpacing:"0.04em", color:"#f1f5f9", lineHeight:1,
-              display:"flex", alignItems:"baseline", gap:2,
+              display:"flex", alignItems:"baseline", justifyContent: "center", gap:2,
             }}>
               <span>{hh}</span>
-              <span style={{color:"#7cc0f8",margin:"0 2px",animation:"blink 1s step-end infinite"}}>:</span>
+              <span style={{color:"#56e4fd",margin:"0 2px",animation:"blink 1s step-end infinite"}}>:</span>
               <span>{mm}</span>
               <span style={{fontSize:"32%",color:"#94a3b8",marginLeft:"0.5em",fontWeight:400}}>{ss}</span>
             </div>
@@ -402,12 +394,23 @@ export default function App() {
               {dayStr}
             </div>
           </div>
+        </div>
 
-          <div style={{height:1,background:"linear-gradient(90deg,#fbbf2455,transparent)"}}/>
+        {/* Vertical divider */}
+        <div style={{
+          width:1, alignSelf:"stretch", flexShrink:0,
+          background:"linear-gradient(180deg,transparent,#56e4fd66 30%,#56e4fd66 70%,transparent)",
+        }}/>
+
+        {/* RIGHT COLUMN: Settings Panel */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",gap:22}}>
 
           {/* Time picker */}
           <div>
-            <div style={{color:"#94a3b8",fontSize:10,letterSpacing:"0.35em",marginBottom:10,fontWeight:700}}>
+            {/* <div style={{color:"#94a3b8",fontSize:10,letterSpacing:"0.35em",marginBottom:10,fontWeight:700}}>
+              ◈ TARGET WAKE TIME
+            </div> */}
+            <div style={{ color: "#cbd5e1", fontSize: 11, letterSpacing: "0.25em", marginBottom: 10, fontWeight: 800 }}>
               ◈ TARGET WAKE TIME
             </div>
             <input type="time"
@@ -415,9 +418,9 @@ export default function App() {
               style={{
                 width:"100%",padding:"11px 16px",
                 background:"#0d1520",
-                border:`1px solid ${alarmTime?"#fbbf2466":"#1e2d4a"}`,
+                border:`1px solid ${alarmTime?"#56e4fd66":"#1e2d4a"}`,
                 borderRadius:4, color:"#f1f5f9",
-                fontSize:28, fontFamily:"inherit",
+                fontSize:22, fontFamily:"inherit",
                 letterSpacing:"0.08em", outline:"none",
                 colorScheme:"dark", transition:"border-color 0.2s",
                 boxSizing:"border-box",
@@ -427,7 +430,7 @@ export default function App() {
 
           {/* Difficulty */}
           <div>
-            <div style={{color:"#94a3b8",fontSize:10,letterSpacing:"0.35em",marginBottom:10,fontWeight:700}}>
+            <div style={{color:"#cbd5e1",fontSize:10,letterSpacing:"0.20em",marginBottom:10,fontWeight:700}}>
               ◈ PUZZLE DIFFICULTY
             </div>
             <div style={{display:"flex",gap:10}}>
@@ -449,21 +452,21 @@ export default function App() {
 
           {/* Alarm Tone */}
           <div>
-            <div style={{color:"#94a3b8",fontSize:10,letterSpacing:"0.35em",marginBottom:10,fontWeight:700}}>
+            <div style={{color:"#cbd5e1",fontSize:10,letterSpacing:"0.20em",marginBottom:10,fontWeight:700}}>
               ◈ ALARM TONE
             </div>
             <div style={{display:"flex",gap:10,marginBottom:8}}>
 
               <button onClick={()=>setToneMode("beep")} style={{
                 flex:1, padding:"10px 0",
-                background:toneMode==="beep"?"#fbbf2414":"#0d1520",
-                border:`1px solid ${toneMode==="beep"?"#fbbf24":"#1e2d4a"}`,
+                background:toneMode==="beep"?"#56e4fd14":"#0d1520",
+                border:`1px solid ${toneMode==="beep"?"#56e4fd":"#1e2d4a"}`,
                 borderRadius:4,
-                color:toneMode==="beep"?"#fbbf24":"#64748b",
+                color:toneMode==="beep"?"#56e4fd":"#64748b",
                 fontSize:10, letterSpacing:"0.2em",
                 fontFamily:"inherit", fontWeight:800, cursor:"pointer",
                 transition:"all 0.18s",
-                boxShadow:toneMode==="beep"?"0 0 18px #fbbf2430":"none",
+                boxShadow:toneMode==="beep"?"0 0 18px #56e4fd2a":"none",
               }}>⚡ GENERATED</button>
 
               <label style={{
@@ -488,12 +491,12 @@ export default function App() {
 
             {/* Tone status line */}
             <div style={{
-              fontSize:9, letterSpacing:"0.2em", paddingLeft:2,
+              fontSize:9, letterSpacing:"0.2em", paddingLeft:2, paddingTop:2,
               color: toneMode==="file" ? "#4ade80" : "#64748b",
             }}>
               {toneMode==="file" && customTone
                 ? `▶ ${customTone}`
-                : "▶ SQUARE WAVE BEEP · RAMPS 5%→100% / 30s"
+                : "▶ SQUARE WAVE BEEP · RAMPS 5%->100% "
               }
             </div>
           </div>
@@ -523,7 +526,7 @@ export default function App() {
           )}
 
           {/* Interaction warning */}
-          {!interacted && (
+          {/* {!interacted && (
             <div style={{
               padding:"10px 14px", borderRadius:4,
               border:"1px solid #fbbf2433", background:"#fbbf2410",
@@ -531,14 +534,14 @@ export default function App() {
             }}>
               ⚠ CLICK ANYWHERE ONCE TO ENABLE AUDIO
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
       {/* Bottom strip */}
       <div style={{
         position:"fixed", bottom:14, left:0, right:0,
-        textAlign:"center", color:"#2d3e5a",
+        textAlign:"center", color:"#4a818a",
         fontSize:9, letterSpacing:"0.3em", zIndex:40, fontWeight:600,
       }}>
         WEB AUDIO API · CUSTOM FILE SUPPORT · WS AUTO-RECONNECT · SERVER-SIDE VERIFICATION

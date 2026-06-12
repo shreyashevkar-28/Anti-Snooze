@@ -1,4 +1,4 @@
-# Anti-Snooze (Cortex) ⏰🧠
+# Anti-Snooze ⏰
 
 **Anti-Snooze** is a modern, full-stack digital alarm clock designed specifically for hostellers and students who struggle with oversleeping. Unlike traditional alarms, this application locks the screen and forces the user to solve a cognitive puzzle before the alarm can be dismissed.
 

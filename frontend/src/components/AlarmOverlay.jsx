@@ -1,9 +1,4 @@
 // AlarmOverlay.jsx
-// Orchestrates 3 mandatory games in order:
-//   1. Math Puzzle
-//   2. ZIP (connect pairs / fill grid)
-//   3. Block Pattern (memorize → recreate)
-
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MathPuzzle   from "./MathPuzzle";
@@ -22,7 +17,6 @@ const GAMES = [
   { id:"pattern", label:"PATTERN", icon:"▦", desc:"Memorize · Recreate the block pattern" },
 ];
 
-// ── Glitch text ───────────────────────────────────────────────────────────────
 function GlitchText({ text }) {
   const [g, setG] = useState(false);
   useEffect(() => {
@@ -47,7 +41,6 @@ function GlitchText({ text }) {
   );
 }
 
-// ── Elapsed timer ─────────────────────────────────────────────────────────────
 function ElapsedTimer() {
   const [s, setS] = useState(0);
   useEffect(() => {
@@ -59,10 +52,9 @@ function ElapsedTimer() {
   return <span style={{ fontVariantNumeric:"tabular-nums" }}>{mm}:{ss}</span>;
 }
 
-// ── Progress bar across top ───────────────────────────────────────────────────
 function ProgressBar({ current, total, meta, completedGames }) {
   return (
-    <div style={{ display:"flex", gap:8, marginBottom:20 }}>
+    <div style={{ display:"flex", gap:10, marginBottom:16 }}>
       {GAMES.map((g, i) => {
         const done    = completedGames.includes(g.id);
         const active  = i === current;
@@ -72,13 +64,13 @@ function ProgressBar({ current, total, meta, completedGames }) {
             alignItems:"center", gap:5,
           }}>
             <div style={{
-              width:"100%", height:3, borderRadius:2,
+              width:"100%", height:4, borderRadius:2,
               background: done ? "#4ade80" : active ? meta.color : "#1e2d4a",
-              boxShadow: active ? `0 0 8px ${meta.color}88` : done ? "0 0 6px #4ade8066" : "none",
+              boxShadow: active ? `0 0 10px ${meta.color}88` : done ? "0 0 6px #4ade8066" : "none",
               transition:"background 0.4s",
             }}/>
             <div style={{
-              fontSize:9, letterSpacing:"0.2em", fontWeight:800,
+              fontSize:10, letterSpacing:"0.2em", fontWeight:800,
               color: done?"#4ade80" : active?meta.color : "#334155",
               display:"flex", alignItems:"center", gap:4,
             }}>
@@ -92,7 +84,6 @@ function ProgressBar({ current, total, meta, completedGames }) {
   );
 }
 
-// ── Game complete transition card ─────────────────────────────────────────────
 function StageClear({ game, meta, onContinue, isLast }) {
   useEffect(() => {
     const id = setTimeout(onContinue, isLast ? 1200 : 1600);
@@ -118,25 +109,24 @@ function StageClear({ game, meta, onContinue, isLast }) {
         {isLast ? "🔓" : "✅"}
       </motion.div>
       <div style={{
-        fontSize:isLast?28:22, fontWeight:900,
+        fontSize: isLast ? 28 : 24, fontWeight:900,
         letterSpacing:"0.1em",
         color: isLast ? "#4ade80" : meta.color,
         textShadow:`0 0 20px ${isLast?"#4ade80":meta.color}`,
       }}>
         {isLast ? "ALARM DISARMED" : `${game.label} CLEARED`}
       </div>
-      <div style={{ fontSize:10, color:"#64748b", letterSpacing:"0.3em", fontWeight:700 }}>
+      <div style={{ fontSize:11, color:"#64748b", letterSpacing:"0.3em", fontWeight:700 }}>
         {isLast ? "GOOD MORNING" : `NEXT: ${GAMES[GAMES.findIndex(g=>g.id===game.id)+1]?.label ?? ""}`}
       </div>
     </motion.div>
   );
 }
 
-// ── Main overlay ──────────────────────────────────────────────────────────────
 export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
   const meta = DIFF_META[difficulty] ?? DIFF_META.medium;
 
-  const [gameIndex, setGameIndex]       = useState(0);   // 0,1,2
+  const [gameIndex, setGameIndex]       = useState(0);   
   const [completedGames, setCompleted]  = useState([]);
   const [stageClear, setStageClear]     = useState(false);
   const [allDone, setAllDone]           = useState(false);
@@ -147,22 +137,17 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
     return () => window.removeEventListener("keydown", block);
   }, []);
 
-  // 1. LOCKED GAME SOLVE HANDLER
-  // Wrapping in useCallback and adding the `stageClear` guard prevents race conditions.
   const handleGameSolved = useCallback(() => {
     if (stageClear || allDone) return; 
-
     const game = GAMES[gameIndex];
     setCompleted(c => c.includes(game.id) ? c : [...c, game.id]);
     setStageClear(true);
   }, [gameIndex, stageClear, allDone]);
 
-  // 2. CENTRALIZED STAGE PROGRESSION
-  // This is triggered strictly by the StageClear component's internal timer.
   const handleStageContinue = useCallback(() => {
     if (gameIndex === GAMES.length - 1) {
       setAllDone(true);
-      onSolve(); // Master disarm
+      onSolve(); 
     } else {
       setStageClear(false);
       setGameIndex(i => i + 1);
@@ -170,7 +155,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
   }, [gameIndex, onSolve]);
 
   const currentGame = GAMES[gameIndex];
-  if (!currentGame) return null; // Safe fallback in case of state mismatch
+  if (!currentGame) return null; 
 
   return (
     <motion.div
@@ -178,11 +163,11 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
       style={{
         position:"fixed", inset:0, zIndex:999,
         display:"flex", alignItems:"center", justifyContent:"center",
-        fontFamily:"'Courier New','Lucida Console',monospace",
-        background:"rgba(2,5,10,0.93)",
+        fontFamily: "inherit",
+        background:"rgba(2,5,10,0.95)",
         backdropFilter:"blur(22px)",
         overflowY:"auto",
-        padding:"20px 0",
+        padding:"10px 0",
       }}
       onPointerDown={e=>e.stopPropagation()}
     >
@@ -192,7 +177,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
       }}/>
 
       <motion.div
-        animate={{ scale:[1,1.3,1], opacity:[0.4,0.75,0.4] }}
+        animate={{ scale:[1,1.25,1], opacity:[0.4,0.75,0.4] }}
         transition={{ repeat:Infinity, duration:2.5, ease:"easeInOut" }}
         style={{
           position:"fixed", width:600, height:600, borderRadius:"50%",
@@ -204,18 +189,18 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
       <motion.div
         style={{
           position:"relative", zIndex:1,
-          width: currentGame.id==="zip" ? 420 : 400,
+          width: currentGame.id === "zip" ? 430 : 400,
           maxWidth:"95vw",
           borderRadius:8,
           border:`1px solid ${meta.border}`,
           background:"#060c16",
-          padding:"28px 30px",
+          padding:"24px 28px",
           boxShadow:`0 0 0 1px #0f1a2e, 0 0 80px ${meta.color}1a`,
         }}
       >
         <div style={{
           display:"flex", alignItems:"center",
-          justifyContent:"space-between", marginBottom:20,
+          justifyContent:"space-between", marginBottom:16,
         }}>
           <div style={{ display:"flex", gap:6 }}>
             {[0,1,2].map(i=>(
@@ -229,7 +214,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
           </div>
 
           <div style={{
-            fontSize:"clamp(1.4rem,4vw,2rem)", fontWeight:900,
+            fontSize:"clamp(1.4rem, 4.5vw, 2.1rem)", fontWeight:900,
             letterSpacing:"0.1em",
           }}>
             <GlitchText text="WAKE UP" />
@@ -237,12 +222,12 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
 
           <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
             <span style={{
-              fontSize:8, letterSpacing:"0.2em", padding:"2px 8px",
+              fontSize:9, letterSpacing:"0.2em", padding:"2px 8px",
               borderRadius:3, color:meta.color,
               background:meta.bg, border:`1px solid ${meta.border}`,
               fontWeight:800,
             }}>{meta.label}</span>
-            <span style={{ fontSize:8, color:"#334155", letterSpacing:"0.2em" }}>
+            <span style={{ fontSize:9, color:"#334155", letterSpacing:"0.2em" }}>
               <ElapsedTimer/>
             </span>
           </div>
@@ -260,16 +245,16 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
             <motion.div key={`title-${gameIndex}`}
               initial={{ opacity:0, y:-6 }} animate={{ opacity:1, y:0 }}
               exit={{ opacity:0 }}
-              style={{ marginBottom:18 }}
+              style={{ marginBottom:16 }}
             >
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
                 <span style={{ fontSize:18, color:meta.color }}>{currentGame.icon}</span>
                 <span style={{
-                  fontSize:12, fontWeight:800, letterSpacing:"0.3em", color:"#f1f5f9",
+                  fontSize:13, fontWeight:800, letterSpacing:"0.3em", color:"#f1f5f9",
                 }}>STAGE {gameIndex+1}/3 · {currentGame.label}</span>
               </div>
               <p style={{
-                fontSize:9, color:"#64748b",
+                fontSize:10, color:"#64748b",
                 letterSpacing:"0.25em", fontWeight:700, margin:0,
               }}>{currentGame.desc.toUpperCase()}</p>
             </motion.div>
@@ -277,7 +262,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
         </AnimatePresence>
 
         <div style={{
-          height:1, marginBottom:20,
+          height:1, marginBottom:18,
           background:`linear-gradient(90deg,transparent,${meta.color}55,transparent)`,
         }}/>
 
@@ -288,7 +273,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
               game={currentGame}
               meta={meta}
               isLast={gameIndex === GAMES.length - 1}
-              onContinue={handleStageContinue} // 3. PROPERLY WIRED CONTINUE TRIGGER
+              onContinue={handleStageContinue}
             />
           ) : (
             <motion.div
@@ -313,7 +298,7 @@ export default function AlarmOverlay({ difficulty = "medium", onSolve }) {
 
         <div style={{
           marginTop:16, textAlign:"center",
-          fontSize:9, color:"#1e2d4a",
+          fontSize:10, color:"#1e2d4a",
           letterSpacing:"0.2em", fontWeight:700,
         }}>
           {completedGames.length === 0

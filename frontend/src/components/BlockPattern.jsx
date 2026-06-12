@@ -1,9 +1,4 @@
-// BlockPattern.jsx  — Game 3/3
-// Memorize a lit pattern, then recreate it from memory.
-// Easy:   3×3 grid, 4 blocks lit, 3s memorize time
-// Medium: 4×4 grid, 7 blocks lit, 2s memorize time
-// Hard:   5×5 grid,12 blocks lit, 1.5s memorize time
-
+// BlockPattern.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,7 +15,7 @@ function generatePattern(size, count) {
     const i = Math.floor(Math.random() * total);
     if (!indices.includes(i)) indices.push(i);
   }
-  return indices; // sorted for consistency
+  return indices;
 }
 
 export default function BlockPattern({ difficulty, meta, onSolve }) {
@@ -28,14 +23,12 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
   const { size, lit, memorizeMs } = cfg;
 
   const [pattern]     = useState(() => generatePattern(size, lit));
-  const [phase, setPhase]       = useState("memorize"); // memorize | recall | result
+  const [phase, setPhase]       = useState("memorize"); 
   const [countdown, setCountdown] = useState(Math.ceil(memorizeMs/1000));
   const [selected, setSelected] = useState(new Set());
-  const [result, setResult]     = useState(null); // "ok" | "bad"
+  const [result, setResult]     = useState(null); 
   const [attempts, setAttempts] = useState(0);
-  const timerRef = useRef(null);
 
-  // Memorize phase countdown
   useEffect(() => {
     if (phase !== "memorize") return;
     const tick = setInterval(() => {
@@ -72,18 +65,15 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
     } else {
       setAttempts(a => a+1);
       setResult("bad");
-      // Show wrong cells briefly, then reset for retry
       setTimeout(() => {
         setSelected(new Set());
         setResult(null);
-        // Give a quick re-show of pattern on 2nd+ attempt
         setPhase("memorize");
         setCountdown(Math.ceil(memorizeMs/1000));
       }, 1200);
     }
   };
 
-  // Cell rendering
   const renderCell = (i) => {
     const isPattern = pattern.includes(i);
     const isSelected = selected.has(i);
@@ -99,13 +89,12 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         glow = `0 0 12px ${meta.color}88`;
       }
     } else {
-      // recall / result phase
       if (result === "ok" && isPattern) {
         bg = "#4ade80"; border = "#4ade80"; glow = "0 0 12px #4ade8088";
       } else if (result === "bad") {
-        if (isPattern && isSelected) { bg="#4ade80"; border="#4ade80"; }       // correct pick
-        else if (isSelected && !isPattern) { bg="#f87171"; border="#f87171"; } // wrong pick
-        else if (isPattern && !isSelected) { bg="#fbbf24"; border="#fbbf24"; } // missed
+        if (isPattern && isSelected) { bg="#4ade80"; border="#4ade80"; }       
+        else if (isSelected && !isPattern) { bg="#f87171"; border="#f87171"; } 
+        else if (isPattern && !isSelected) { bg="#fbbf24"; border="#fbbf24"; } 
         else { bg="#0a1220"; }
       } else if (isSelected) {
         bg = meta.color+"99";
@@ -114,7 +103,7 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
       }
     }
 
-    const cellPx = Math.min(56, Math.floor(280 / size));
+    const cellPx = Math.min(48, Math.floor(250 / size));
 
     return (
       <motion.div
@@ -134,24 +123,23 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
     );
   };
 
-  const cellPx = Math.min(56, Math.floor(280/size));
+  const cellPx = Math.min(58, Math.floor(290/size));
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:16, alignItems:"center" }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:12, alignItems:"center" }}>
 
-      {/* Phase label */}
       <AnimatePresence mode="wait">
         {phase === "memorize" ? (
           <motion.div key="mem"
             initial={{opacity:0,y:-6}} animate={{opacity:1,y:0}} exit={{opacity:0,y:6}}
             style={{ textAlign:"center" }}
           >
-            <p style={{ color:meta.color, fontSize:11, letterSpacing:"0.35em",
+            <p style={{ color:meta.color, fontSize:12, letterSpacing:"0.35em",
               fontWeight:800, margin:0 }}>MEMORIZE THE PATTERN</p>
-            <p style={{ color:"#64748b", fontSize:10, letterSpacing:"0.25em",
+            <p style={{ color:"#64748b", fontSize:11, letterSpacing:"0.25em",
               fontWeight:700, margin:"6px 0 0" }}>
               HIDING IN &nbsp;
-              <span style={{ color:"#f1f5f9", fontSize:18, fontWeight:900 }}>
+              <span style={{ color:"#f1f5f9", fontSize:20, fontWeight:900, fontVariantNumeric: "tabular-nums" }}>
                 {countdown}
               </span>
             </p>
@@ -161,11 +149,11 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
             initial={{opacity:0,y:-6}} animate={{opacity:1,y:0}} exit={{opacity:0,y:6}}
             style={{ textAlign:"center" }}
           >
-            <p style={{ color:meta.color, fontSize:11, letterSpacing:"0.35em",
+            <p style={{ color:meta.color, fontSize:12, letterSpacing:"0.35em",
               fontWeight:800, margin:0 }}>
               {result==="bad" ? "WRONG! WATCH AGAIN…" : "RECREATE THE PATTERN"}
             </p>
-            <p style={{ color:"#64748b", fontSize:9, letterSpacing:"0.25em",
+            <p style={{ color:"#64748b", fontSize:11, letterSpacing:"0.25em",
               fontWeight:700, margin:"4px 0 0" }}>
               {selected.size} / {lit} SELECTED
               {attempts>0 ? `  ·  ATTEMPT ${attempts+1}` : ""}
@@ -174,12 +162,11 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         )}
       </AnimatePresence>
 
-      {/* Grid */}
       <div style={{
         display:"grid",
         gridTemplateColumns:`repeat(${size},${cellPx}px)`,
         gap:5,
-        padding:12,
+        padding:10,
         background:"#070d16",
         borderRadius:8,
         border:`1px solid ${result==="ok"?"#4ade8066":result==="bad"?"#f8717166":meta.border}`,
@@ -188,17 +175,16 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         {Array.from({length:size*size},(_,i)=>renderCell(i))}
       </div>
 
-      {/* Submit — only in recall phase */}
       {phase === "recall" && !result && (
         <button
           onClick={verify}
           disabled={selected.size === 0}
           style={{
-            padding:"11px 28px", borderRadius:4,
+            padding:"12px 28px", borderRadius:4,
             background: selected.size > 0 ? meta.color : "#0a1220",
             border:`1px solid ${selected.size > 0 ? meta.color : "#1e2d4a"}`,
             color: selected.size > 0 ? "#000" : "#2d3e5a",
-            fontSize:10, letterSpacing:"0.4em",
+            fontSize:11, letterSpacing:"0.4em",
             fontFamily:"inherit", fontWeight:800,
             cursor: selected.size > 0 ? "pointer" : "not-allowed",
             transition:"all 0.15s",
@@ -209,8 +195,7 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         </button>
       )}
 
-      {/* Hint */}
-      <p style={{ color:"#334155", fontSize:9, letterSpacing:"0.2em",
+      <p style={{ color:"#334155", fontSize:10, letterSpacing:"0.2em",
         fontWeight:600, margin:0, textAlign:"center" }}>
         {phase==="memorize"
           ? `REMEMBER ${lit} LIT BLOCKS`

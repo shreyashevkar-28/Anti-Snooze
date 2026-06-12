@@ -1,8 +1,4 @@
-// MathPuzzle.jsx  — Game 1/3
-// Easy:   single op  e.g.  34 + 17
-// Medium: two-step   e.g.  (8 × 6) + 23
-// Hard:   three-step e.g.  (9 × 7) − (4 × 6) + 13
-
+// MathPuzzle.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -26,7 +22,6 @@ function generate(difficulty) {
     const ans = op === "+" ? a * b + c : a * b - c;
     return { q: `(${a} × ${b}) ${op} ${c}`, ans };
   }
-  // hard — three terms
   const a = r(4, 15), b = r(4, 12);
   const c = r(2, 9),  d = r(2, 8);
   const e = r(5, 25);
@@ -40,7 +35,7 @@ export default function MathPuzzle({ difficulty, meta, onSolve }) {
   const [input, setInput]       = useState("");
   const [attempts, setAttempts] = useState(0);
   const [shake, setShake]       = useState(false);
-  const [flash, setFlash]       = useState(null); // "ok" | "bad"
+  const [flash, setFlash]       = useState(null); 
   const inputRef = useRef(null);
 
   useEffect(() => { setTimeout(() => inputRef.current?.focus(), 80); }, []);
@@ -64,22 +59,21 @@ export default function MathPuzzle({ difficulty, meta, onSolve }) {
   return (
     <motion.div
       animate={shake ? { x:[0,-14,14,-10,10,-6,6,0], transition:{ duration:0.45 } } : { x:0 }}
-      style={{ display:"flex", flexDirection:"column", gap:18 }}
+      style={{ display:"flex", flexDirection:"column", gap:12 }}
     >
-      {/* Problem display */}
       <motion.div
         key={puzzle.q}
         initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }}
         style={{
-          fontSize:"clamp(1.5rem,5vw,2.2rem)", fontWeight:800,
+          fontSize:"clamp(1.6rem, 5vw, 2.2rem)", fontWeight:800,
           textAlign:"center", letterSpacing:"0.08em",
-          padding:"24px 16px", borderRadius:6,
+          padding:"20px 16px", borderRadius:6,
           border:`1px solid ${flash==="ok"?"#4ade80":flash==="bad"?"#f87171":meta.border}`,
           background: flash==="ok"?"#4ade8015":flash==="bad"?"#f8717115":meta.bg,
           color: flash==="ok"?"#4ade80":flash==="bad"?"#f87171":meta.color,
           textShadow:`0 0 24px ${meta.color}60`,
           transition:"all 0.2s",
-          fontFamily:"'Courier New',monospace",
+          fontFamily: "inherit",
         }}
       >
         {puzzle.q} = ?
@@ -93,11 +87,11 @@ export default function MathPuzzle({ difficulty, meta, onSolve }) {
           onChange={e => setInput(e.target.value)}
           placeholder="?"
           style={{
-            width:"100%", padding:"13px",
+            width:"100%", padding:"10px",
             borderRadius:4, background:"#0a1220",
             border:`1px solid ${input ? meta.color+"88" : "#1e2d4a"}`,
-            color:"#f1f5f9", fontSize:30, textAlign:"center",
-            fontFamily:"'Courier New',monospace", letterSpacing:"0.1em",
+            color:"#f1f5f9", fontSize:28, textAlign:"center",
+            fontFamily: "inherit", fontVariantNumeric: "tabular-nums", letterSpacing:"0.1em",
             outline:"none", caretColor:meta.color,
             transition:"border-color 0.2s", boxSizing:"border-box",
           }}
@@ -106,7 +100,7 @@ export default function MathPuzzle({ difficulty, meta, onSolve }) {
         <AnimatePresence>
           {attempts > 0 && (
             <motion.p initial={{opacity:0,y:-4}} animate={{opacity:1,y:0}}
-              style={{ fontSize:10, color:"#f87171", textAlign:"center",
+              style={{ fontSize:11, color:"#f87171", textAlign:"center",
                 letterSpacing:"0.25em", fontWeight:700, margin:0 }}>
               {attempts} WRONG — THINK HARDER
             </motion.p>
@@ -114,11 +108,11 @@ export default function MathPuzzle({ difficulty, meta, onSolve }) {
         </AnimatePresence>
 
         <button type="submit" disabled={!input} style={{
-          padding:"13px", borderRadius:4,
+          padding:"14px", borderRadius:4,
           background: input ? meta.color : "#0a1220",
           border:`1px solid ${input ? meta.color : "#1e2d4a"}`,
           color: input ? "#000" : "#2d3e5a",
-          fontSize:10, letterSpacing:"0.4em",
+          fontSize:11, letterSpacing:"0.4em",
           fontFamily:"inherit", fontWeight:800,
           cursor: input ? "pointer" : "not-allowed",
           transition:"all 0.15s",
