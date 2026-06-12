@@ -126,7 +126,7 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
   const cellPx = Math.min(58, Math.floor(290/size));
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:12, alignItems:"center" }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:16, alignItems:"center" }}>
 
       <AnimatePresence mode="wait">
         {phase === "memorize" ? (
@@ -166,7 +166,7 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         display:"grid",
         gridTemplateColumns:`repeat(${size},${cellPx}px)`,
         gap:5,
-        padding:10,
+        padding:16,
         background:"#070d16",
         borderRadius:8,
         border:`1px solid ${result==="ok"?"#4ade8066":result==="bad"?"#f8717166":meta.border}`,
@@ -195,8 +195,8 @@ export default function BlockPattern({ difficulty, meta, onSolve }) {
         </button>
       )}
 
-      <p style={{ color:"#334155", fontSize:10, letterSpacing:"0.2em",
-        fontWeight:600, margin:0, textAlign:"center" }}>
+      <p style={{ color:"#334155", fontSize:12, letterSpacing:"0.25em",
+        fontWeight:700, margin:0, textAlign:"center" }}>
         {phase==="memorize"
           ? `REMEMBER ${lit} LIT BLOCKS`
           : `SELECT EXACTLY ${lit} BLOCKS`}
