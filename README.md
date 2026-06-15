@@ -17,9 +17,9 @@ Standard alarms are too easy to turn off while you are half-asleep. **Anti-Snooz
 
 Try out the live web deployment, set test alarms, and practice your puzzle response speeds:
 
-> **🔗 Live Demo Link:** `https://your-anti-snooze-demo-link.dev`
+> **🔗 Live Demo Link:** `Deployed Link Here`
 
-<img src="./frontend/src/assets/interface.PNG" width="80%" alt="Anti-Snooze Interface Preview" />
+<img src="./frontend/src/assets/Interface.PNG" width="100%" alt="Anti-Snooze Dashboard Interface Preview" />
 
 ---
 
