@@ -1,39 +1,41 @@
-# ⏰ Anti-Snooze Alarm Clock System 
+## ⏰ Anti-Snooze Alarm Clock System 
 
-A high-tech digital alarm clock dashboard built to stop you from mindlessly hitting snooze in the morning. This system locks your screen and forces your brain to wake up by solving puzzles before the alarm finally turns off.
-
----
-
-### ◈ What It Does (The Anti-Snooze Concept)
-
-Standard alarms are too easy to turn off while you are half-asleep. **Anti-Snooze** changes that:
-1. **Unbreakable Overlay:** When the alarm goes off, a full-screen block covers the dashboard and locks out quick bypasses like the `Escape` key.
-2. **Rising Volume:** The alarm sound starts very quiet (**5%**) and automatically climbs to full volume (**100%**) over 30 seconds.
-3. **Brain Exercises:** To stop the sound, you must complete **3 quick games** in a row. 
+A high-tech digital alarm clock dashboard built to stop you from mindlessly hitting snooze in the morning. This system locks your screen and forces your brain to wake up by solving puzzles before the alarm finally turns off.</small>
 
 ---
 
-### ◈ Live Demo & Preview
+#### ◈ What It Does (The Anti-Snooze Concept)
 
-Try out the live web deployment, set test alarms, and practice your puzzle response speeds:
+> Standard alarms are too easy to turn off while you are half-asleep. **Anti-Snooze** changes that:
+> 1. **Unbreakable Overlay:** When the alarm goes off, a full-screen block covers the dashboard and locks out quick bypasses like the `Escape` key.
+> 2. **Rising Volume:** The alarm sound starts very quiet (**5%**) and automatically climbs to full volume (**100%**) over 30 seconds.
+> 3. **Brain Exercises:** To stop the sound, you must complete **3 quick games** in a row.
 
-> **🔗 Live Demo Link:** `Deployed Link Here`
-
-<img src="./frontend/src/assets/Interface.PNG" width="100%" alt="Anti-Snooze Dashboard Interface Preview" />
-
----
-
-### ◈ The 3 Wake-Up Puzzles
-
-You must clear these stages in order to turn off the alarm:
-
-1. **Math Puzzle (`MathPuzzle.jsx`):** Solves quick arithmetic equations (e.g., additions or multiplications) to kickstart your logical thinking.
-2. **ZIP Grid (`ZipPuzzle.jsx`):** A path-drawing grid where you must drag a single line to connect numbered nodes ($1 \rightarrow N$) while filling up every empty block.
-3. **Block Pattern (`BlockPattern.jsx`):** A visual memory game. Blocks flash on the screen for a couple of seconds, and you must click the exact spots from memory.
+<small>*Note: All puzzle grids are custom-sized to a compact, single-screen view (~250px height) so you never have to scroll down to read instructions while waking up.*</small>
 
 ---
 
-### ◈ Technology Used
+#### ◈ Live Demo & Preview
+
+<small>Try out the live web deployment, set test alarms, and practice your puzzle response speeds:</small>
+
+> 🔗 **Live Demo Link:** `https://your-anti-snooze-demo-link.dev`
+
+<img src="./frontend/src/assets/Interface.PNG" width="80%" alt="Anti-Snooze Interface Preview" />
+
+---
+
+#### ◈ The 3 Wake-Up Puzzles
+
+<small>You must clear these stages in order to turn off the alarm:</small>
+
+* **Math Puzzle (`MathPuzzle.jsx`):** Solves quick arithmetic equations (e.g., additions or multiplications) to kickstart your logical thinking.
+* **ZIP Grid (`ZipPuzzle.jsx`):** A path-drawing grid where you must drag a single line to connect numbered nodes ($1 \rightarrow N$) while filling up every empty block.
+* **Block Pattern (`BlockPattern.jsx`):** A visual memory game. Blocks flash on the screen for a couple of seconds, and you must click the exact spots from memory.
+
+---
+
+#### ◈ Technology Used
 
 * **React (Vite):** Powering the interactive user interface, settings, and layout styling.
 * **Framer Motion:** Animates the puzzle screens so they slide smoothly as you pass each stage.
@@ -43,7 +45,7 @@ You must clear these stages in order to turn off the alarm:
 
 ---
 
-### ◈ Project Directory & Structure
+#### ◈ Project Directory & Structure
 
 ```text
 ├── backend/
