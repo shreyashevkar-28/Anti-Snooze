@@ -19,7 +19,7 @@ Try out the live web deployment, set test alarms, and practice your puzzle respo
 
 > **🔗 Live Demo Link:** `https://your-anti-snooze-demo-link.dev`
 
-<img src="./frontend/src/assets/interface.PNG" width="80%" alt="Anti-Snooze Interface Preview" />
+<img src="C:\Users\Personal\Desktop\Github\Anti_Snooze\frontend\src\assets\Interface.PNG" width="80%" alt="Anti-Snooze Interface Preview" />
 
 ---
 
