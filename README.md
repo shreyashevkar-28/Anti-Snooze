@@ -19,7 +19,7 @@ A high-tech digital alarm clock dashboard built to stop you from mindlessly hitt
 
 <small>Try out the live web deployment, set test alarms, and practice your puzzle response speeds:</small>
 
-> 🔗 **Live Demo Link:** `https://your-anti-snooze-demo-link.dev`
+> 🔗 **Live Demo Link:** `Deployed Link Here`
 
 <img src="./frontend/src/assets/Interface.PNG" width="80%" alt="Anti-Snooze Interface Preview" />
 
