@@ -11,8 +11,6 @@ A high-tech digital alarm clock dashboard built to stop you from mindlessly hitt
 > 2. **Rising Volume:** The alarm sound starts very quiet (**5%**) and automatically climbs to full volume (**100%**) over 30 seconds.
 > 3. **Brain Exercises:** To stop the sound, you must complete **3 quick games** in a row.
 
-<small>*Note: All puzzle grids are custom-sized to a compact, single-screen view (~250px height) so you never have to scroll down to read instructions while waking up.*</small>
-
 ---
 
 #### ◈ Live Demo & Preview
